@@ -1,1 +1,33 @@
 
+# .editorconfig
+
+root = true
+
+[*]
+# Indentation settings
+indent_style = space
+indent_size = 2
+
+# Set line endings to LF
+end_of_line = lf
+
+# UTF-8 as default encoding
+charset = utf-8
+
+# Trim trailing whitespace
+trim_trailing_whitespace = true
+
+# Insert a final newline at the end of files
+insert_final_newline = true
+
+# Max line length for readability
+max_line_length = 100
+
+[*.md]
+# Keep indentation flexible for markdown files
+indent_size = 4
+trim_trailing_whitespace = false
+
+[*.json]
+# JSON files should have consistent formatting
+indent_size = 2
