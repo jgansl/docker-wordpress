@@ -1,0 +1,24 @@
+{
+  "$schema": "https://biomejs.dev/schema.json",
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentSize": 2,
+    "lineWidth": 100
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "complexity": {
+        "maxCyclomaticComplexity": 10
+      },
+      "noUnusedVariables": "error",
+      "noConsole": "warn",
+      "noImplicitAny": "error"
+    }
+  },
+  "files": {
+    "ignore": ["node_modules", "dist", "build"]
+  }
+}
