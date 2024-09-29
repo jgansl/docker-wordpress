@@ -1,0 +1,45 @@
+
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16' # Change to your preferred Node.js version
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build assets
+      run: npm run build # If you have frontend assets to build
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2' # Change to your PHP version
+
+    - name: Install Composer dependencies
+      run: composer install --no-dev --optimize-autoloader --prefer-dist
+
+    - name: Deploy to AWS via SSH
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_PRIVATE_KEY }} # Add this in your GitHub Secrets
+        HOST: ${{ secrets.AWS_HOST }}                       # Add this in your GitHub Secrets
+        USER: ${{ secrets.AWS_USER }}                       # Add this in your GitHub Secrets
+      run: |
+        echo "$SSH_PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
+        rsync -az --delete -e "ssh -i private_key.pem" ./ ${USER}@${HOST}:/var/www/project
