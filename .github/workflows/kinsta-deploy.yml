@@ -1,1 +1,47 @@
+name: Deploy to Kinsta
 
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Kinsta
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16' # Set your Node.js version
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build assets
+      run: npm run build # If you have frontend assets to build
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2' # Set your PHP version
+
+    - name: Install Composer dependencies
+      run: composer install --no-dev --optimize-autoloader --prefer-dist
+
+    - name: Authenticate with Kinsta CLI
+      env:
+        KINSTA_API_TOKEN: ${{ secrets.KINSTA_API_TOKEN }} # Add this to GitHub Secrets
+      run: |
+        curl -fsSL https://cli.kinsta.com | bash
+        kinsta auth login --api-key $KINSTA_API_TOKEN
+
+    - name: Deploy to Kinsta
+      run: |
+        kinsta sites deploy ${KINSTA_SITE_ID} --path . --env production
+      env:
+        KINSTA_SITE_ID: ${{ secrets.KINSTA_SITE_ID }}  # Add this in GitHub Secrets
